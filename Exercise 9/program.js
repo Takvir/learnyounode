@@ -1,25 +1,47 @@
 var http = require('http');
-var link = process.argv.slice(2);
-var count = 0;
-
-var array= [];
-link.forEach(getData);
-
-function getData(url, index) {
-  http.get(url, function(response) {
-    var str = '';
-    response.setEncoding('utf8');
-    response.on("data", function(data) {
-      str += data;
-    });
-    response.on('end', function() {
-      array[index] = str;
-      count++;
-      if (count === link.length) {
-        array.forEach(function(msg) {
-          console.log(msg);
+function get(url, callback){
+    http.get(url, function(res){
+        res.setEncoding('utf8');
+        var msg = '';
+        res.on("data", function(data){
+            msg += data;
         });
-      }
-    });
-  });
+        res.on("error", function(err){
+            callback(err);
+        });
+        res.on("end", function(data){
+            callback(null, msg);
+        });
+    })
+}
+
+var rAll = [];
+var rLimit = 0;
+var rDone = 0;
+
+function checkDone(){
+    if(rDone == rLimit){
+        rAll.sort(function(a,b){
+            if(a[0] > b[0]) return 1;
+            else if(a[0] < b[0]) return -1;
+            else return 0;
+        });
+        rAll.forEach(function(r){
+            console.log(r[1]);
+        });
+    }
+}
+
+for(var i=2; i<process.argv.length; i++){
+    rLimit++;
+    (function(i){
+        get(process.argv[i], function(err, data){
+            if (err) throw err;
+            else{
+                rAll.push([i-2, data]);
+                rDone++;
+                checkDone();
+            }
+        });
+    })(i);
 }

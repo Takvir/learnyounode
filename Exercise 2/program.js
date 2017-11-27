@@ -1,7 +1,5 @@
-var result = 0;
-
+var a = 0;
 for (var i = 2; i < process.argv.length; i++) {
-    result += Number(process.argv[i]);
+    a += Number(process.argv[i]);
 }
-
-console.log(result);
+console.log(a);

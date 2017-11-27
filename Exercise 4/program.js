@@ -1,11 +1,13 @@
-var arr = process.argv[2];
 var fs = require('fs');
-fs.readFile(arr, function doneReading(err, fileContents) {
-    if (err){
-        console.log('Error')
-    } else {
-        var number = fileContents.toString().split('\n').length -1;
-    console.log(number);
-    }
 
+fs.readFile(process.argv[2], 'utf8', function (err, data) {
+    
+    if (err) 
+    return console.error(err);
+    
+    var length = data.toString().split("\n").length;
+    
+    if (length > 0) length -= 1;
+    
+    console.log(length);
 });
